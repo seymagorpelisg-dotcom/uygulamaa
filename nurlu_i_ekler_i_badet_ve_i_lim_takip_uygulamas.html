@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurlu Çiçekler - Günlük İbadet Takibi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Quicksand & Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelPink: '#FFD1DC',
+                        pastelDeepPink: '#FF85A2',
+                        pastelPurple: '#E2D4F9',
+                        pastelDeepPurple: '#9B72CF',
+                        pastelMint: '#D4F0F0',
+                        pastelDeepMint: '#52B2BF',
+                        pastelYellow: '#FFF275',
+                        pastelOrange: '#FFD3B6'
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FFF0F5 0%, #F3E8FF 50%, #E6FFFA 100%);
+            min-height: 100vh;
+        }
+        .font-display {
+            font-family: 'Quicksand', sans-serif;
+        }
+        .flower-bg {
+            background-image: radial-gradient(#FFB6C1 1px, transparent 1px), radial-gradient(#D8B4FE 1px, #FFF0F5 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            background-opacity: 0.3;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F3E8FF;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #C084FC;
+            border-radius: 10px;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .animate-pulse-soft {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="flower-bg text-gray-700 min-h-screen flex flex-col justify-between pb-10">
+
+    <!-- Üst Başlık ve Mod Değiştirici -->
+    <header class="w-full max-w-5xl mx-auto p-4 sm:p-6">
+        <div class="glass-card rounded-3xl p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border-pink-200">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white text-2xl shadow-md animate-float">
+                    🌸
+                </div>
+                <div>
+                    <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-purple-800 flex items-center gap-2">
+                        Nurlu Çiçekler
+                        <span class="text-xs bg-pink-100 text-pink-600 font-bold px-2.5 py-1 rounded-full border border-pink-300">İbadet Takibi</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-purple-600 font-medium">Dualarla ve İbadetlerle Büyüyen Kalpler ✨</p>
+                </div>
+            </div>
+
+            <!-- Kullanıcı Giriş / Mod Seçici -->
+            <div class="flex bg-purple-100/80 p-1.5 rounded-2xl border border-purple-200 shadow-inner w-full sm:w-auto">
+                <button id="btn-student-mode" onclick="switchMode('student')" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white text-pink-600 shadow-md">
+                    <i class="fa-solid fa-child-dress text-lg"></i>
+                    Öğrenci Girişi
+                </button>
+                <button id="btn-parent-mode" onclick="switchMode('parent')" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 text-purple-700 hover:text-purple-900">
+                    <i class="fa-solid fa-user-tie text-lg"></i>
+                    Veli / Öğretmen
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 flex-grow">
+
+        <!-- ========================================== -->
+        <!--              ÖĞRENCİ PANELİ                -->
+        <!-- ========================================== -->
+        <div id="student-panel" class="space-y-6">
+
+            <!-- Öğrenci Profil Seçimi & Tarih -->
+            <div class="glass-card p-5 rounded-3xl shadow-sm border border-purple-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="text-3xl">👧</div>
+                    <div class="w-full">
+                        <label for="student-select" class="block text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">Öğrenci Profili</label>
+                        <select id="student-select" onchange="changeStudent()" class="w-full md:w-64 bg-white border-2 border-pink-200 text-purple-900 text-sm font-bold rounded-2xl focus:ring-pink-400 focus:border-pink-400 p-2.5 shadow-sm outline-none">
+                            <option value="Zeynep Nur">Zeynep Nur 🌸</option>
+                            <option value="Meryem">Meryem 🌷</option>
+                            <option value="Elif">Elif 🌼</option>
+                            <option value="Ayşe">Ayşe 🌺</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 bg-pink-50 border border-pink-200 px-4 py-2 rounded-2xl text-pink-700 font-bold text-sm shadow-sm">
+                    <i class="fa-regular fa-calendar-check text-pink-500"></i>
+                    <span id="current-date-display">...</span>
+                </div>
+            </div>
+
+            <!-- Günün Motivasyon Sözü Card -->
+            <div class="relative overflow-hidden glass-card rounded-3xl p-6 shadow-md border-2 border-pink-200 bg-gradient-to-r from-pink-100/70 via-purple-100/70 to-blue-100/70">
+                <div class="absolute -right-4 -bottom-4 text-7xl opacity-20 pointer-events-none">✨</div>
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-pink-400 text-white rounded-2xl shadow-md text-xl flex-shrink-0">
+                        <i class="fa-solid fa-quote-left"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-extrabold uppercase tracking-widest text-pink-600 bg-pink-200/60 px-3 py-0.5 rounded-full">Günün Kalp Serinliği</span>
+                            <button onclick="randomizeQuote()" class="text-xs text-purple-600 hover:text-purple-800 font-bold underline flex items-center gap-1">
+                                <i class="fa-solid fa-arrows-rotate"></i> Başka Söz Göster
+                            </button>
+                        </div>
+                        <p id="quote-display-text" class="text-lg sm:text-xl font-display font-bold text-purple-900 leading-relaxed italic">
+                            "Her namaz, kalbine açılan huzur dolu bir penceredir 🌸"
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İbadet Takip Bölümü Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- 5 Vakit Namaz Takibi (2 Kolon Genişliğinde) -->
+                <div class="lg:col-span-2 glass-card p-6 rounded-3xl shadow-md border border-purple-100">
+                    <div class="flex justify-between items-center mb-5">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🕌</span>
+                            <h2 class="font-display text-xl font-bold text-purple-900">5 Vakit Namaz Çiçeklerim</h2>
+                        </div>
+                        <span id="prayer-score-badge" class="bg-purple-100 text-purple-700 font-extrabold text-xs px-3 py-1.5 rounded-full border border-purple-200">
+                            0 / 5 Tamamlandı 🌸
+                        </span>
+                    </div>
+
+                    <!-- Namaz Vakitleri Kartları -->
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-3" id="prayer-cards-container">
+                        <!-- JS ile Dinamik Dolacak -->
+                    </div>
+
+                    <div class="mt-5 p-3 bg-purple-50/80 rounded-2xl border border-purple-100 flex items-center gap-3 text-xs text-purple-700">
+                        <i class="fa-solid fa-circle-info text-pink-400 text-base"></i>
+                        <span>Kıldığın her namaz için kutucuğa tıkla, çiçeğini açtır! Bütün vakitleri tamamlamaya gayret edelim ✨</span>
+                    </div>
+                </div>
+
+                <!-- Günlük Kur'an Okuma Takibi -->
+                <div class="glass-card p-6 rounded-3xl shadow-md border border-purple-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-2xl">📖</span>
+                            <h2 class="font-display text-xl font-bold text-purple-900">Kur'an Okuma</h2>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-purple-700 mb-1">Bugün Ne Kadar Okudun?</label>
+                                <div class="relative">
+                                    <input type="text" id="quran-amount" placeholder="Örn: 2 Sayfa / Yasin Suresi..." 
+                                        class="w-full bg-white border-2 border-pink-200 rounded-2xl py-2.5 px-3 text-sm text-purple-900 focus:outline-none focus:border-pink-400 font-semibold shadow-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-purple-700 mb-1">Kısa Notun / Yaşadığın Huzur</label>
+                                <textarea id="quran-note" rows="2" placeholder="Örn: Tecvid kurallarına dikkat ederek okudum 😊"
+                                    class="w-full bg-white border-2 border-pink-200 rounded-2xl p-2.5 text-sm text-purple-900 focus:outline-none focus:border-pink-400 font-semibold shadow-sm resize-none"></textarea>
+                            </div>
+
+                            <label class="flex items-center gap-3 p-3 bg-emerald-50 rounded-2xl border border-emerald-200 cursor-pointer hover:bg-emerald-100/60 transition-colors">
+                                <input type="checkbox" id="quran-completed-check" class="w-5 h-5 text-emerald-500 rounded-md focus:ring-emerald-400 border-emerald-300">
+                                <span class="text-xs font-extrabold text-emerald-800">Bugünkü Kur'an Okumamı Tamamladım ⭐</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-400 italic mt-4 text-center">"Sizin en hayırlınız Kur'an'ı öğrenen ve öğretendir." (Hadis-i Şerif)</p>
+                </div>
+            </div>
+
+            <!-- Velime / Hocama Not Gönderme Bölümü -->
+            <div class="glass-card p-6 rounded-3xl shadow-md border border-purple-100">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">💌</span>
+                        <h2 class="font-display text-xl font-bold text-purple-900">Velime / Öğretmenime Not Gönder</h2>
+                    </div>
+                    <span class="text-xs text-purple-500 font-medium">Soru sorabilir, duygu ve düşüncelerini paylaşabilirsin.</span>
+                </div>
+
+                <div class="space-y-3">
+                    <textarea id="student-message-input" rows="3" placeholder="Sevgili öğretmenim/anneciğim, bugün namazlarımı kılarken..."
+                        class="w-full bg-white border-2 border-purple-200 rounded-2xl p-4 text-sm text-purple-900 focus:outline-none focus:border-purple-400 font-medium shadow-sm custom-scrollbar"></textarea>
+
+                    <div class="flex justify-end gap-3">
+                        <button onclick="saveStudentProgress()" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-extrabold text-sm rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-heart"></i>
+                            Günü Kaydet ve Notumu Gönder
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Gönderilen Notlar Geçmişi (Öğrenci İçin) -->
+            <div class="glass-card p-5 rounded-3xl border border-purple-100">
+                <h3 class="font-display font-bold text-sm text-purple-800 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-pink-400"></i>
+                    Önceki Notlarım ve Cevaplar
+                </h3>
+                <div id="student-notes-history" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                    <!-- JS Dolacak -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!--           VELİ / ÖĞRETMEN PANELİ           -->
+        <!-- ========================================== -->
+        <div id="parent-panel" class="hidden space-y-6">
+
+            <!-- Veli Bilgilendirme Banner -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm border border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-white flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-purple-900 flex items-center gap-2">
+                        <span>👩‍🏫</span> Veli ve Öğretmen Takip Merkezi
+                    </h2>
+                    <p class="text-xs sm:text-sm text-purple-600 font-medium mt-1">Öğrencilerin günlük ibadet takiplerini inceleyebilir, gelen soruları yanıtlayabilir ve motivasyon sözlerini güncelleyebilirsiniz.</p>
+                </div>
+                <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-purple-100">
+                    <span class="text-xs font-bold text-purple-500 uppercase">Seçili Öğrenci Filtresi:</span>
+                    <select id="parent-student-filter" onchange="renderParentView()" class="bg-purple-50 text-purple-900 font-bold text-sm rounded-xl p-1.5 outline-none border border-purple-200">
+                        <option value="ALL">Tüm Öğrenciler 🌟</option>
+                        <option value="Zeynep Nur">Zeynep Nur 🌸</option>
+                        <option value="Meryem">Meryem 🌷</option>
+                        <option value="Elif">Elif 🌼</option>
+                        <option value="Ayşe">Ayşe 🌺</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab Butonları -->
+            <div class="flex border-b border-purple-200 gap-2 pb-2">
+                <button id="tab-btn-logs" onclick="switchParentTab('logs')" class="px-5 py-2.5 rounded-2xl font-bold text-sm bg-purple-600 text-white shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i>
+                    Öğrenci İbadet Özetleri
+                </button>
+                <button id="tab-btn-quotes" onclick="switchParentTab('quotes')" class="px-5 py-2.5 rounded-2xl font-bold text-sm bg-white text-purple-700 hover:bg-purple-100 transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    Motivasyon Sözü Düzenleyici
+                </button>
+            </div>
+
+            <!-- Alt Sekme 1: Öğrenci İbadet Takip Tablosu & Mesajlar -->
+            <div id="parent-tab-logs" class="space-y-6">
+
+                <!-- İbadet Özet Kartları -->
+                <div id="student-summary-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- JS Dolacak -->
+                </div>
+
+                <!-- Gelen Notlar ve Sorular Kutusı -->
+                <div class="glass-card p-6 rounded-3xl shadow-md border border-purple-100">
+                    <h3 class="font-display font-bold text-lg text-purple-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-envelope-open-text text-pink-500"></i>
+                        Öğrencilerden Gelen Notlar ve Sorular
+                    </h3>
+
+                    <div id="parent-messages-list" class="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
+                        <!-- JS Dolacak -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Alt Sekme 2: Motivasyon Sözü Yönetimi -->
+            <div id="parent-tab-quotes" class="hidden space-y-6">
+                <div class="glass-card p-6 rounded-3xl shadow-md border border-purple-100">
+                    <h3 class="font-display font-bold text-lg text-purple-900 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                        Günün Motivasyon Sözlerini Yönet
+                    </h3>
+                    <p class="text-xs text-purple-600 mb-4">Öğrencilerin ana sayfasında rastgele gösterilecek ilham verici, tatlı ve cesaretlendirici cümleler ekleyin.</p>
+
+                    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                        <input type="text" id="new-quote-input" placeholder="Yeni motivasyon sözü yazın... (Örn: Gülümsemek de sadakadır 😊)"
+                            class="flex-grow bg-white border-2 border-purple-200 rounded-2xl px-4 py-3 text-sm text-purple-900 focus:outline-none focus:border-purple-400 font-medium">
+                        <button onclick="addNewQuote()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Ekle
+                        </button>
+                    </div>
+
+                    <h4 class="font-bold text-xs text-purple-500 uppercase tracking-wider mb-3">Mevcut Motivasyon Sözleri Listesi</h4>
+                    <div id="quotes-list-container" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
+                        <!-- JS Dolacak -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Alt Bilgi / Footer -->
+    <footer class="w-full max-w-5xl mx-auto px-4 sm:px-6 mt-8 text-center">
+        <p class="text-xs text-purple-500 font-semibold flex items-center justify-center gap-1">
+            <span>Nurlu Çiçekler Uygulaması</span> • Sevgi, İlim ve İbadetle Büyüyen Nesiller 🌸 ✨
+        </p>
+    </footer>
+
+    <!-- Bildirim Toast Modal -->
+    <div id="toast-modal" class="fixed bottom-6 right-6 transform translate-y-32 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <div class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/20">
+            <span id="toast-icon" class="text-2xl">🌸</span>
+            <div>
+                <h5 id="toast-title" class="font-bold text-sm">Başarılı!</h5>
+                <p id="toast-msg" class="text-xs text-pink-100">İşleminiz kaydedildi.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Varsayılan Namaz Vakitleri
+        const PRAYERS = [
+            { id: 'sabah', name: 'Sabah', icon: '🌅', color: 'from-amber-100 to-orange-100 border-amber-300 text-amber-800' },
+            { id: 'ogle', name: 'Öğle', icon: '☀️', color: 'from-yellow-100 to-amber-100 border-yellow-300 text-yellow-800' },
+            { id: 'ikindi', name: 'İkindi', icon: '🌤️', color: 'from-orange-100 to-pink-100 border-orange-300 text-orange-800' },
+            { id: 'aksam', name: 'Akşam', icon: '🌆', color: 'from-purple-100 to-pink-100 border-purple-300 text-purple-800' },
+            { id: 'yatsı', name: 'Yatsı', icon: '🌙', color: 'from-indigo-100 to-purple-100 border-indigo-300 text-indigo-800' }
+        ];
+
+        // Varsayılan Motivasyon Sözleri
+        const DEFAULT_QUOTES = [
+            "Her namaz, kalbine açılan huzur dolu bir penceredir 🌸",
+            "Bugün okuduğun her harf sana bir iyilik çiçeği olarak dönecek ✨",
+            "Küçük bir tebessüm ve güzel bir söz de sadakadır 😊",
+            "Duaların, gökyüzüne uçan en güzel kelebeklerdir 🦋",
+            "Sabır ve namazla Allah'tan yardım isteyin 🌷",
+            "Kalpler ancak Allah'ı anmakla huzur bulur 💖",
+            "İlim öğrenmek her Müslümana farzdır, sen bir ilim çiçeğisin 📖"
+        ];
+
+        // Uygulama Durumu
+        let currentMode = 'student'; // 'student' veya 'parent'
+        let currentStudent = 'Zeynep Nur';
+        let quotes = [];
+        let studentData = {}; // { 'Zeynep Nur': { prayers: {sabah: true...}, quranAmount: '', quranNote: '', quranDone: false, history: [...] } }
+
+        window.onload = function() {
+            // Tarih Ayarı
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const todayStr = new Date().toLocaleDateString('tr-TR', options);
+            document.getElementById('current-date-display').innerText = todayStr;
+
+            // LocalStorage Yükleme
+            loadInitialData();
+
+            // Ekran İlk Yükleme
+            renderStudentView();
+            renderQuotesList();
+            randomizeQuote();
+        };
+
+        function loadInitialData() {
+            // Quotes Yükle
+            const savedQuotes = localStorage.getItem('nurlu_quotes');
+            if (savedQuotes) {
+                quotes = JSON.parse(savedQuotes);
+            } else {
+                quotes = [...DEFAULT_QUOTES];
+                localStorage.setItem('nurlu_quotes', JSON.stringify(quotes));
+            }
+
+            // Student Data Yükle
+            const savedData = localStorage.getItem('nurlu_student_data');
+            if (savedData) {
+                studentData = JSON.parse(savedData);
+            } else {
+                // Örnek başlangıç verileri
+                studentData = {
+                    'Zeynep Nur': createEmptyStudentObject(),
+                    'Meryem': createEmptyStudentObject(),
+                    'Elif': createEmptyStudentObject(),
+                    'Ayşe': createEmptyStudentObject()
+                };
+                localStorage.setItem('nurlu_student_data', JSON.stringify(studentData));
+            }
+        }
+
+        function createEmptyStudentObject() {
+            return {
+                prayers: { sabah: false, ogle: false, ikindi: false, aksam: false, yatsı: false },
+                quranAmount: '',
+                quranNote: '',
+                quranDone: false,
+                messages: [] // { id, date, text, reply, read }
+            };
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const studentBtn = document.getElementById('btn-student-mode');
+            const parentBtn = document.getElementById('btn-parent-mode');
+            const studentPanel = document.getElementById('student-panel');
+            const parentPanel = document.getElementById('parent-panel');
+
+            if (mode === 'student') {
+                studentBtn.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white text-pink-600 shadow-md";
+                parentBtn.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 text-purple-700 hover:text-purple-900";
+                studentPanel.classList.remove('hidden');
+                parentPanel.classList.add('hidden');
+                renderStudentView();
+            } else {
+                parentBtn.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white text-purple-700 shadow-md";
+                studentBtn.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 text-purple-700 hover:text-purple-900";
+                studentPanel.classList.add('hidden');
+                parentPanel.classList.remove('hidden');
+                renderParentView();
+            }
+        }
+
+        function changeStudent() {
+            const select = document.getElementById('student-select');
+            currentStudent = select.value;
+            renderStudentView();
+            showToast('Profil Değişti 🌸', `${currentStudent} profiline geçiş yapıldı.`);
+        }
+
+        function renderStudentView() {
+            // Eğer öğrenci verisi yoksa oluştur
+            if (!studentData[currentStudent]) {
+                studentData[currentStudent] = createEmptyStudentObject();
+            }
+
+            const data = studentData[currentStudent];
+
+            // 1. Namaz Kartlarını Oluştur
+            const prayerContainer = document.getElementById('prayer-cards-container');
+            prayerContainer.innerHTML = '';
+            let completedCount = 0;
+
+            PRAYERS.forEach(p => {
+                const isChecked = data.prayers[p.id] || false;
+                if (isChecked) completedCount++;
+
+                const card = document.createElement('div');
+                card.onclick = () => togglePrayer(p.id);
+                card.className = `cursor-pointer rounded-2xl p-4 border-2 transition-all duration-300 flex flex-col items-center justify-center text-center gap-2 select-none ${
+                    isChecked 
+                    ? 'bg-gradient-to-b from-pink-200 to-purple-200 border-pink-400 shadow-lg scale-105' 
+                    : 'bg-white/80 border-purple-100 hover:border-pink-200 hover:bg-pink-50/50'
+                }`;
+
+                card.innerHTML = `
+                    <span class="text-3xl animate-float">${p.icon}</span>
+                    <span class="font-extrabold text-sm text-purple-900">${p.name}</span>
+                    <div class="mt-1 w-7 h-7 rounded-full flex items-center justify-center text-xs border-2 ${
+                        isChecked 
+                        ? 'bg-pink-500 border-pink-600 text-white font-bold shadow-md' 
+                        : 'bg-gray-100 border-gray-300 text-transparent'
+                    }">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                `;
+                prayerContainer.appendChild(card);
+            });
+
+            // Rozet Güncelleme
+            document.getElementById('prayer-score-badge').innerText = `${completedCount} / 5 Tamamlandı 🌸`;
+
+            // 2. Kur'an Alanlarını Doldur
+            document.getElementById('quran-amount').value = data.quranAmount || '';
+            document.getElementById('quran-note').value = data.quranNote || '';
+            document.getElementById('quran-completed-check').checked = data.quranDone || false;
+
+            // 3. Öğrenci Not Geçmişi Doldur
+            renderStudentHistory(data.messages || []);
+        }
+
+        function togglePrayer(prayerId) {
+            if (!studentData[currentStudent]) return;
+            studentData[currentStudent].prayers[prayerId] = !studentData[currentStudent].prayers[prayerId];
+            saveDataToLocalStorage();
+            renderStudentView();
+        }
+
+        function renderStudentHistory(messages) {
+            const container = document.getElementById('student-notes-history');
+            if (!messages || messages.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-400 italic p-2">Henüz velinize veya öğretmeninize bir not göndermediniz.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            // En yeni mesaj üstte
+            [...messages].reverse().forEach(msg => {
+                const item = document.createElement('div');
+                item.className = "bg-white/90 p-3 rounded-2xl border border-purple-100 text-xs space-y-1 shadow-sm";
+                item.innerHTML = `
+                    <div class="flex justify-between items-center text-purple-400 font-bold">
+                        <span><i class="fa-solid fa-paper-plane text-pink-400"></i> ${msg.date}</span>
+                        ${msg.reply ? '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px]">Cevaplandı ✨</span>' : '<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px]">Bekliyor...</span>'}
+                    </div>
+                    <p class="font-semibold text-purple-900">${escapeHtml(msg.text)}</p>
+                    ${msg.reply ? `
+                        <div class="mt-2 pt-2 border-t border-purple-50 bg-purple-50 p-2 rounded-xl text-purple-800">
+                            <span class="font-bold text-purple-600 block mb-0.5">💬 Velinin/Öğretmenin Cevabı:</span>
+                            ${escapeHtml(msg.reply)}
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function saveStudentProgress() {
+            const data = studentData[currentStudent];
+
+            // Kur'an bilgilerini kaydet
+            data.quranAmount = document.getElementById('quran-amount').value.trim();
+            data.quranNote = document.getElementById('quran-note').value.trim();
+            data.quranDone = document.getElementById('quran-completed-check').checked;
+
+            // Mesaj varsa kaydet
+            const msgInput = document.getElementById('student-message-input');
+            const msgText = msgInput.value.trim();
+
+            if (msgText !== '') {
+                const newMsg = {
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'}),
+                    text: msgText,
+                    reply: '',
+                    read: false
+                };
+                if (!data.messages) data.messages = [];
+                data.messages.push(newMsg);
+                msgInput.value = '';
+            }
+
+            saveDataToLocalStorage();
+            renderStudentView();
+            showToast('Başarıyla Kaydedildi! 💖', 'Bugünkü ibadet takibin ve notun kaydedildi.');
+        }
+
+        function switchParentTab(tab) {
+            const tabLogs = document.getElementById('parent-tab-logs');
+            const tabQuotes = document.getElementById('parent-tab-quotes');
+            const btnLogs = document.getElementById('tab-btn-logs');
+            const btnQuotes = document.getElementById('tab-btn-quotes');
+
+            if (tab === 'logs') {
+                tabLogs.classList.remove('hidden');
+                tabQuotes.classList.add('hidden');
+                btnLogs.className = "px-5 py-2.5 rounded-2xl font-bold text-sm bg-purple-600 text-white shadow-md flex items-center gap-2";
+                btnQuotes.className = "px-5 py-2.5 rounded-2xl font-bold text-sm bg-white text-purple-700 hover:bg-purple-100 transition-colors flex items-center gap-2";
+            } else {
+                tabLogs.classList.add('hidden');
+                tabQuotes.classList.remove('hidden');
+                btnQuotes.className = "px-5 py-2.5 rounded-2xl font-bold text-sm bg-purple-600 text-white shadow-md flex items-center gap-2";
+                btnLogs.className = "px-5 py-2.5 rounded-2xl font-bold text-sm bg-white text-purple-700 hover:bg-purple-100 transition-colors flex items-center gap-2";
+            }
+        }
+
+        function renderParentView() {
+            const filter = document.getElementById('parent-student-filter').value;
+            const cardsContainer = document.getElementById('student-summary-cards');
+            const messagesContainer = document.getElementById('parent-messages-list');
+
+            cardsContainer.innerHTML = '';
+            messagesContainer.innerHTML = '';
+
+            const studentKeys = filter === 'ALL' ? Object.keys(studentData) : [filter];
+
+            // 1. İbadet Özet Kartlarını Rendere
+            studentKeys.forEach(studentName => {
+                const sData = studentData[studentName] || createEmptyStudentObject();
+                
+                // Kılınan namaz sayısı
+                let prayerDoneCount = 0;
+                Object.values(sData.prayers || {}).forEach(v => { if(v) prayerDoneCount++; });
+
+                const card = document.createElement('div');
+                card.className = "glass-card p-5 rounded-3xl border border-purple-100 shadow-sm space-y-3";
+
+                let prayerBadgesHTML = '';
+                PRAYERS.forEach(p => {
+                    const isDone = sData.prayers ? sData.prayers[p.id] : false;
+                    prayerBadgesHTML += `
+                        <span class="px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 ${
+                            isDone ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-gray-100 text-gray-400'
+                        }">
+                            ${p.icon} ${p.name}
+                        </span>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-purple-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">👧</span>
+                            <h4 class="font-bold text-base text-purple-900">${studentName}</h4>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 font-extrabold px-3 py-1 rounded-full">
+                            ${prayerDoneCount} / 5 Vakit
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="text-[11px] font-bold text-purple-400 uppercase tracking-wider block mb-1">Namaz Durumu</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${prayerBadgesHTML}
+                        </div>
+                    </div>
+
+                    <div class="bg-pink-50/60 p-3 rounded-2xl border border-pink-100 text-xs space-y-1">
+                        <div class="flex items-center justify-between text-pink-700 font-bold">
+                            <span>📖 Kur'an Okuma:</span>
+                            <span>${sData.quranDone ? '✅ Tamamlandı' : '⏳ Devam Ediyor'}</span>
+                        </div>
+                        <p class="text-purple-900 font-medium">${sData.quranAmount ? 'Miktar: ' + escapeHtml(sData.quranAmount) : 'Henüz miktar girilmedi.'}</p>
+                        ${sData.quranNote ? `<p class="text-gray-500 italic">"${escapeHtml(sData.quranNote)}"</p>` : ''}
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+
+            // 2. Mesajlar/Sorular Listesi
+            let allMessages = [];
+            studentKeys.forEach(studentName => {
+                const sData = studentData[studentName];
+                if (sData && sData.messages) {
+                    sData.messages.forEach(m => {
+                        allMessages.push({ ...m, studentName });
+                    });
+                }
+            });
+
+            if (allMessages.length === 0) {
+                messagesContainer.innerHTML = '<p class="text-xs text-gray-400 italic p-3 text-center">Öğrencilerden gelen herhangi bir not veya soru bulunmuyor.</p>';
+                return;
+            }
+
+            // En yeni en üstte
+            allMessages.sort((a, b) => b.id - a.id);
+
+            allMessages.forEach(msg => {
+                const item = document.createElement('div');
+                item.className = "bg-white p-4 rounded-2xl border border-purple-100 shadow-sm space-y-2";
+                item.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-purple-50 pb-1.5">
+                        <span class="font-bold text-sm text-purple-900 flex items-center gap-1.5">
+                            <span class="text-pink-500">🌸</span> ${msg.studentName}
+                        </span>
+                        <span class="text-[11px] text-purple-400">${msg.date}</span>
+                    </div>
+                    <p class="text-xs text-gray-700 font-medium leading-relaxed">${escapeHtml(msg.text)}</p>
+
+                    <!-- Yanıt Alanı -->
+                    <div class="pt-2">
+                        ${msg.reply ? `
+                            <div class="bg-purple-50 p-2.5 rounded-xl text-xs text-purple-900 border border-purple-100">
+                                <span class="font-bold text-purple-600 block text-[10px] uppercase">Verilen Cevap:</span>
+                                ${escapeHtml(msg.reply)}
+                            </div>
+                        ` : `
+                            <div class="flex gap-2 mt-2">
+                                <input type="text" id="reply-input-${msg.studentName}-${msg.id}" placeholder="Öğrenciye motive edici bir cevap yazın..."
+                                    class="flex-grow bg-purple-50/50 border border-purple-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-purple-400">
+                                <button onclick="sendReply('${msg.studentName}', ${msg.id})" class="px-4 py-1.5 bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs rounded-xl shadow-sm transition-all">
+                                    Cevapla
+                                </button>
+                            </div>
+                        `}
+                    </div>
+                `;
+                messagesContainer.appendChild(item);
+            });
+        }
+
+        function sendReply(studentName, msgId) {
+            const input = document.getElementById(`reply-input-${studentName}-${msgId}`);
+            if (!input) return;
+            const replyText = input.value.trim();
+
+            if (!replyText) return;
+
+            const student = studentData[studentName];
+            if (student && student.messages) {
+                const targetMsg = student.messages.find(m => m.id === msgId);
+                if (targetMsg) {
+                    targetMsg.reply = replyText;
+                    saveDataToLocalStorage();
+                    renderParentView();
+                    showToast('Cevap Gönderildi! ✨', `${studentName} öğrencisine cevabınız iletildi.`);
+                }
+            }
+        }
+
+        function randomizeQuote() {
+            if (quotes.length === 0) return;
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quote-display-text').innerText = `"${quotes[randomIndex]}"`;
+        }
+
+        function renderQuotesList() {
+            const container = document.getElementById('quotes-list-container');
+            container.innerHTML = '';
+
+            quotes.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-3 bg-white rounded-2xl border border-purple-100 text-xs font-semibold text-purple-900 shadow-sm";
+                item.innerHTML = `
+                    <span class="flex-grow pr-3">"${escapeHtml(q)}"</span>
+                    <button onclick="deleteQuote(${idx})" class="text-pink-400 hover:text-pink-600 p-1.5 rounded-lg hover:bg-pink-50 transition-colors">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function addNewQuote() {
+            const input = document.getElementById('new-quote-input');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            quotes.push(text);
+            localStorage.setItem('nurlu_quotes', JSON.stringify(quotes));
+            input.value = '';
+            renderQuotesList();
+            randomizeQuote();
+            showToast('Söz Eklendi ✨', 'Yeni motivasyon sözü başarıyla eklendi.');
+        }
+
+        function deleteQuote(index) {
+            quotes.splice(index, 1);
+            localStorage.setItem('nurlu_quotes', JSON.stringify(quotes));
+            renderQuotesList();
+            randomizeQuote();
+            showToast('Söz Silindi', 'Motivasyon sözü listeden kaldırıldı.');
+        }
+
+        function saveDataToLocalStorage() {
+            localStorage.setItem('nurlu_student_data', JSON.stringify(studentData));
+        }
+
+        function showToast(title, msg) {
+            const toast = document.getElementById('toast-modal');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = msg;
+
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
